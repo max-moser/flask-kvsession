@@ -5,7 +5,7 @@ flask_kvsession is a drop-in replacement module for Flask sessions that uses a
 
 import calendar
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 from random import SystemRandom
 
 import six
@@ -36,7 +36,7 @@ class SessionID(object):
 
     def __init__(self, id, created=None):
         if created is None:
-            created = datetime.utcnow()
+            created = datetime.now(timezone.utc)
 
         self.id = id
         self.created = created
@@ -51,7 +51,7 @@ class SessionID(object):
                          instead of :meth:`~datetime.datetime.utcnow()` as the
                          current time.
         """
-        now = now or datetime.utcnow()
+        now = now or datetime.now(timezone.utc)
         return now > self.created + lifetime
 
     def serialize(self):
@@ -65,7 +65,10 @@ class SessionID(object):
         :param string: A string created by :meth:`serialize`.
         """
         id_s, created_s = string.split("_")
-        return cls(int(id_s, 16), datetime.utcfromtimestamp(int(created_s, 16)))
+        return cls(
+            int(id_s, 16),
+            datetime.fromtimestamp(int(created_s, 16), tz=timezone.utc),
+        )
 
 
 class KVSession(CallbackDict, SessionMixin):
@@ -258,7 +261,7 @@ class KVSessionExtension(object):
             app = current_app
         for key in app.kvsession_store.keys():
             m = self.key_regex.match(key)
-            now = datetime.utcnow()
+            now = datetime.now(timezone.utc)
             if m:
                 # read id
                 sid = SessionID.unserialize(key)

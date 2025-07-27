@@ -271,7 +271,7 @@ def test_correct_error_reporting_with_no_secret_key(app, client):
 def test_can_store_datetime(client):
     client.get("/store-datetime/")
     rv = client.get("/dump-datetime/")
-    assert rv.data == b("2011-08-10 15:46:00")
+    assert rv.data == "2011-08-10 15:46:00+00:00".encode()
 
 
 def test_missing_session_causes_new_empty_session(store, client):

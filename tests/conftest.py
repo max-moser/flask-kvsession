@@ -1,12 +1,10 @@
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 
 import pytest
-import six
 from flask import Flask, session
-from simplekv.memory import DictStore
-
 from flask_kvsession import KVSession, KVSessionExtension
+from simplekv.memory import DictStore
 
 
 @pytest.fixture
@@ -71,7 +69,7 @@ def app(store):
 
     @app.route("/store-datetime/")
     def store_datetime():
-        t = datetime(2011, 8, 10, 15, 46, 00)
+        t = datetime(2011, 8, 10, 15, 46, 00, tzinfo=timezone.utc)
         session["datetime_key"] = t
         return "ok"
 

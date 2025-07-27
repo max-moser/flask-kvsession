@@ -1,27 +1,27 @@
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 
 from flask_kvsession import SessionID
 
 
 def test_serialize():
     t = int(time.time())
-    dt = datetime.utcfromtimestamp(t)
+    dt = datetime.fromtimestamp(t, tz=timezone.utc)
     sid = SessionID(1234, dt)
 
     assert "%x_%x" % (1234, t) == sid.serialize()
 
 
 def test_automatic_created_date():
-    start = datetime.utcnow()
+    start = datetime.now(tz=timezone.utc)
     sid = SessionID(0)
-    end = datetime.utcnow()
+    end = datetime.now(tz=timezone.utc)
 
     assert start <= sid.created <= end
 
 
 def test_serialize_unserialize():
-    dt = datetime(2011, 7, 9, 13, 14, 15)
+    dt = datetime(2011, 7, 9, 13, 14, 15, tzinfo=timezone.utc)
     id = 59034
 
     sid = SessionID(id, dt)
