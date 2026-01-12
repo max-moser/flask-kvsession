@@ -20,6 +20,8 @@ try:
 except ImportError:
     import pickle
 
+__version__ = "0.6.4"
+
 
 class SessionID(object):
     """Helper class for parsing session ids.
