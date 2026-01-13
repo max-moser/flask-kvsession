@@ -13,5 +13,5 @@ set -o errexit
 # Quit on unbound symbols
 set -o nounset
 
-python -m pytest
 eval "$(docker-services-cli up --cache ${CACHE:-redis} --env)"
+python -m pytest

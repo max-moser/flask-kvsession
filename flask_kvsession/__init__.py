@@ -8,7 +8,6 @@ import re
 from datetime import datetime, timezone
 from random import SystemRandom
 
-import six
 from flask import current_app
 from flask.sessions import SessionInterface, SessionMixin
 from itsdangerous import BadSignature, Signer
@@ -292,7 +291,7 @@ class KVSessionExtension(object):
 
         session_interface_factory = app.config.get("SESSION_INTERFACE_FACTORY")
         if session_interface_factory:
-            if isinstance(session_interface_factory, six.string_types):
+            if isinstance(session_interface_factory, str):
                 app.session_interface = import_string(session_interface_factory)()
                 return
             app.session_interface = session_interface_factory()

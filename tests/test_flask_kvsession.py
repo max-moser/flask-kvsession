@@ -6,12 +6,9 @@ import time
 from datetime import timedelta
 
 import pytest
-import six
 from flask import Flask, session
-from itsdangerous import Signer
-from six import b
-
 from flask_kvsession import KVSession, KVSessionExtension, KVSessionInterface
+from itsdangerous import Signer
 
 
 class CustomSessionInterfaceWithPermanentAnonymousSession(KVSessionInterface):
@@ -25,9 +22,9 @@ class CustomSessionInterfaceWithPermanentAnonymousSession(KVSessionInterface):
 def app_with_session_interface_factory(store):
     app = Flask(__name__)
 
-    app.config[
-        "SESSION_INTERFACE_FACTORY"
-    ] = CustomSessionInterfaceWithPermanentAnonymousSession
+    app.config["SESSION_INTERFACE_FACTORY"] = (
+        CustomSessionInterfaceWithPermanentAnonymousSession
+    )
     app.config["TESTING"] = True
     app.config["SECRET_KEY"] = "devkey"
     app.kvsession = KVSessionExtension(store, app)
@@ -51,15 +48,15 @@ def split_cookie(app, rv):
     for cookie in cookie_data.split("&"):
         name, value = cookie_data.split("=")
 
-        if name == app.session_cookie_name:
+        if name == app.config["SESSION_COOKIE_NAME"]:
             unsigned_value = signer.unsign(value)
-            sid, created = unsigned_value.split(b("_"))
+            sid, created = unsigned_value.split("_".encode())
             return sid.decode("ascii"), int(created, 16)
 
 
 def test_app_request_no_extras(client):
     rv = client.get("/")
-    assert b("move along") in rv.data
+    assert "move along".encode() in rv.data
 
 
 def test_no_session_usage_uses_no_storage(store, client):
@@ -99,7 +96,7 @@ def test_session_restores_properly(client):
     assert s["k2"] == "value2"
 
 
-def test_manipulation_caught(client):
+def test_manipulation_caught(app, client):
     client.get("/store-in-session/k1/value1/")
     rv = client.get("/dump-session/")
 
@@ -108,7 +105,7 @@ def test_manipulation_caught(client):
     assert s["k1"] == "value1"
 
     # now manipulate the cookie
-    cookie = client.get_session_cookie()
+    cookie = client.get_cookie(app.config["SESSION_COOKIE_NAME"])
     v_orig = cookie.value
 
     # FIXME: this seems to break (i.e. not detect manipulation) if the
@@ -180,7 +177,7 @@ def test_can_destroy_sessions(client):
 
     # destroy session
     rv = client.get("/destroy-session/")
-    assert b("session destroyed") in rv.data
+    assert "session destroyed".encode() in rv.data
 
     rv = client.get("/dump-session/")
     s = json_dec(rv.data)
@@ -283,27 +280,27 @@ def test_missing_session_causes_new_empty_session(store, client):
     store.delete(store.keys()[0])
 
     rv = client.get("/dump-session/")
-    assert rv.data == b("{}")
+    assert rv.data == "{}".encode()
 
     rv = client.get("/is-kvsession/")
-    assert rv.data == b("True")
+    assert rv.data == "True".encode()
 
 
-def test_manipulated_session_causes_new_empty_session(client):
+def test_manipulated_session_causes_new_empty_session(app, client):
     client.get("/store-in-session/k1/value1/")
     rv = client.get("/dump-session/")
     s = json_dec(rv.data)
     assert s["k1"] == "value1"
 
-    cookie = client.get_session_cookie()
+    cookie = client.get_cookie(app.config["SESSION_COOKIE_NAME"])
     cookie.value += "x"
 
     rv = client.get("/dump-session/")
 
-    assert rv.data == b("{}")
+    assert rv.data == "{}".encode()
 
     rv = client.get("/is-kvsession/")
-    assert rv.data == b("True")
+    assert rv.data == "True".encode()
 
 
 def test_expired_session_causes_new_empty_session(app, client):
@@ -326,7 +323,7 @@ def test_expired_session_causes_new_empty_session(app, client):
 
     # we should have a new session now
     rv = client.get("/is-new-session/")
-    assert rv.data == b("True")
+    assert rv.data == "True".encode()
 
     rv = client.get("/dump-session/")
     s = json_dec(rv.data)
@@ -347,12 +344,12 @@ def test_permanent_session_cookies_are_permanent(app, client):
     client.get("/store-in-session/k1/value1/")
 
     # session cookie
-    assert client.get_session_cookie().expires is None
+    assert client.get_cookie(app.config["SESSION_COOKIE_NAME"]).expires is None
 
     client.get("/make-session-permanent/")
 
     # now it needs to be permanent
-    assert client.get_session_cookie().expires is not None
+    assert client.get_cookie(app.config["SESSION_COOKIE_NAME"]).expires is not None
 
 
 def test_regenerate_before_session(client):
@@ -377,20 +374,20 @@ def test_destroying_session_immediately(client):
 
 def test_new_session_not_modified(client):
     rv = client.get("/is-modified-session/")
-    assert rv.data == b("False")
+    assert rv.data == "False".encode()
 
 
 def test_existing_session_not_modified(client):
     client.get("/store-in-session/k1/value1/")
     rv = client.get("/is-modified-session/")
-    assert rv.data == b("False")
+    assert rv.data == "False".encode()
 
 
 def test_path_app_root(app, client):
     app.config["APPLICATION_ROOT"] = "/foo"
 
     client.get("/store-in-session/k1/value1/")
-    cookie = client.get_session_cookie("/foo")
+    cookie = client.get_cookie(app.config["SESSION_COOKIE_NAME"], path="/foo")
     assert cookie.path == "/foo"
 
 
@@ -399,7 +396,7 @@ def test_path_session_path(app, client):
     app.config["SESSION_COOKIE_PATH"] = "/bar"
 
     client.get("/store-in-session/k1/value1/")
-    cookie = client.get_session_cookie("/bar")
+    cookie = client.get_cookie(app.config["SESSION_COOKIE_NAME"], path="/bar")
     assert cookie.path == "/bar"
 
 
