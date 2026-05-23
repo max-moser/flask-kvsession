@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2014 Marc Brinkmann.
+# SPDX-FileCopyrightText: 2019 CERN.
+# SPDX-License-Identifier: MIT
+
 from datetime import timedelta
 
 import pytest

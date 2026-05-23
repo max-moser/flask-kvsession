@@ -1,5 +1,12 @@
 #!/usr/bin/env python
 # coding=utf8
+# SPDX-FileCopyrightText: 2011-2014 Marc Brinkmann.
+# SPDX-FileCopyrightText: 2013 Mark Hildreth.
+# SPDX-FileCopyrightText: 2013 Semion Sidorenko.
+# SPDX-FileCopyrightText: 2015 John Gibson.
+# SPDX-FileCopyrightText: 2019 CERN.
+# SPDX-FileCopyrightText: 2026 Graz University of Technology.
+# SPDX-License-Identifier: MIT
 
 import json
 import time

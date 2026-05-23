@@ -1,3 +1,11 @@
+# SPDX-FileCopyrightText: 2014-2015 Marc Brinkmann.
+# SPDX-FileCopyrightText: 2015 Jari Tervonen.
+# SPDX-FileCopyrightText: 2015 John Gibson.
+# SPDX-FileCopyrightText: 2019 Mona Al Owe.
+# SPDX-FileCopyrightText: 2019 CERN.
+# SPDX-FileCopyrightText: 2024-2026 Graz University of Technology.
+# SPDX-License-Identifier: MIT
+
 """
 flask_kvsession is a drop-in replacement module for Flask sessions that uses a
 :class:`simplekv.KeyValueStore` as a backend for server-side sessions.

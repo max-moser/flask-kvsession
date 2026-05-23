@@ -1,3 +1,9 @@
+# SPDX-FileCopyrightText: 2014 Marc Brinkmann.
+# SPDX-FileCopyrightText: 2015 John Gibson.
+# SPDX-FileCopyrightText: 2019 CERN.
+# SPDX-FileCopyrightText: 2026 Graz University of Technology.
+# SPDX-License-Identifier: MIT
+
 import json
 from datetime import datetime, timezone
 
