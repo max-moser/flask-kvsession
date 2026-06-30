@@ -1,0 +1,65 @@
+# SPDX-FileCopyrightText: 2011-2014 Marc Brinkmann.
+# SPDX-FileCopyrightText: 2013 Semion Sidorenko.
+# SPDX-FileCopyrightText: 2020 CERN.
+# SPDX-FileCopyrightText: 2024-2026 Graz University of Technology.
+# SPDX-FileCopyrightText: 2026 TU Wien.
+# SPDX-License-Identifier: MIT
+
+[project]
+name = "Flask-KVSession-Invenio"
+description = "Transparent server-side session support for flask"
+readme = "README.rst"
+requires-python = ">=3.9"
+license = "MIT"
+authors = [
+  { name = "Marc Brinkmann", email = "git@marcbrinkmann.de" },
+]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+]
+dependencies = [
+  "flask>=3.0.0",
+  "itsdangerous>=2.0.0",
+  "simplekv>=0.14.0",
+  "werkzeug>=3.1.5",
+]
+dynamic = ["version"]
+
+[project.urls]
+Repository = "https://github.com/mbr/flask-kvsession"
+
+[project.optional-dependencies]
+tests = [
+  "docker-services-cli>=0.12.0",
+  "pytest>=6,<9",
+  "redis>=7.0.0",
+  "standard-distutils>=3.11.9",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "flask_kvsession/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = [
+  "/flask_kvsession",
+]
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/flask_kvsession",
+]
+
+[tool.isort]
+profile = "black"
+
+[tool.pydocstyle]
+add_ignore = ""
+
+[tool.pytest.ini_options]
+addopts = '--black --isort --pydocstyle --doctest-glob="*.rst" --doctest-modules --cov=flask_kvsession --cov-report=term-missing'
+testpaths = "tests flask_kvsession"
+live_server_scope = "module"
