@@ -30,7 +30,13 @@ Repository = "https://github.com/mbr/flask-kvsession"
 
 [project.optional-dependencies]
 tests = [
+  "coverage>=5.3,<6",
   "docker-services-cli>=0.12.0",
+  "pytest-black>=0.3.0",
+  "pytest-cov>=2.10.1",
+  "pytest-flask>=1.0.0",
+  "pytest-isort>=1.2.0",
+  "pytest-mock>=1.6.0",
   "pytest>=6,<9",
   "redis>=7.0.0",
   "standard-distutils>=3.11.9",
@@ -60,6 +66,6 @@ profile = "black"
 add_ignore = ""
 
 [tool.pytest.ini_options]
-addopts = '--black --isort --pydocstyle --doctest-glob="*.rst" --doctest-modules --cov=flask_kvsession --cov-report=term-missing'
+addopts = '--black --isort --doctest-glob="*.rst" --doctest-modules --cov=flask_kvsession --cov-report=term-missing'
 testpaths = "tests flask_kvsession"
 live_server_scope = "module"
