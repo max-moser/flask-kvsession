@@ -14,8 +14,9 @@ from datetime import timedelta
 
 import pytest
 from flask import Flask, session
-from flask_kvsession import KVSession, KVSessionExtension, KVSessionInterface
 from itsdangerous import Signer
+
+from flask_kvsession import KVSession, KVSessionExtension, KVSessionInterface
 
 
 class CustomSessionInterfaceWithPermanentAnonymousSession(KVSessionInterface):
