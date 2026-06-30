@@ -3,6 +3,7 @@
 # SPDX-FileCopyrightText: 2026 Graz University of Technology.
 # SPDX-License-Identifier: MIT
 
+
 def test_secure_false(app, client):
     app.config["SESSION_COOKIE_SECURE"] = False
 

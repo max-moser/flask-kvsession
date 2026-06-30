@@ -9,8 +9,9 @@ from datetime import datetime, timezone
 
 import pytest
 from flask import Flask, session
-from flask_kvsession import KVSession, KVSessionExtension
 from simplekv.memory import DictStore
+
+from flask_kvsession import KVSession, KVSessionExtension
 
 
 @pytest.fixture
